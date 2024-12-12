@@ -46,7 +46,7 @@ public class Boid : MonoBehaviour
     
     private Vector3 GetSeparationDirection()
     {
-        var separation = transform.position;
+        var separation = Vector3.zero;
         foreach (var boid in _flock.boids)
         {
             separation += (transform.position - boid.transform.position);
