@@ -8,16 +8,23 @@ public class Flock : MonoBehaviour
     public Boid[] boids;
     public GameObject boidPrefab;
     
+    [Range(1, 10)]
     public int totalBoids;
+    [Range(0, 10)]
     public float seperationFactor;
+    [Range(0, 10)]
     public float alignmentFactor;
+    [Range(0, 10)]
     public float cohesionFactor;
-    public float speed;
+    [Range(0, 1)]
+    public float speed;   
+    [Range(0, 100)]
+    public float boidInertia;
     
     void Start()
     {
         boids = new Boid[totalBoids];
-        
+            
         GameObject tempPrefab;
         for (var i = 0; i < totalBoids; i++)
         {
@@ -30,7 +37,6 @@ public class Flock : MonoBehaviour
             );
             
             boids[i] = tempPrefab.GetComponent<Boid>();
-            
         }
     }
 
@@ -39,11 +45,11 @@ public class Flock : MonoBehaviour
     {
     }
 
-    public Vector3 GetAvgVelocity()
+    public Vector3 GetFlockVelocity()
     {
         var directions = boids.Select(b => b.GetVelocity());
         var avgDirection = directions.Aggregate(Vector3.zero, (current, direction) => current + direction);
-        return avgDirection / (float) totalBoids;
+        return avgDirection.normalized;
     }
 
     public Vector3 GetAvgPosition()
