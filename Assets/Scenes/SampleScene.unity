@@ -165,11 +165,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boids: []
   boidPrefab: {fileID: 2811215098840868387, guid: 386e3f7648516f849bc917bcd059318c, type: 3}
-  totalBoids: 3
-  seperationFactor: 1
+  totalBoids: 10
+  seperationFactor: 0.539
   alignmentFactor: 1
   cohesionFactor: 1
+  influenceRadius: 3.49
   speed: 0.001
+  boidInertia: 0.465
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
