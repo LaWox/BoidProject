@@ -17,7 +17,6 @@ namespace BoidBehaviour
         private Vector3 _alignment = Vector3.zero;
         private Vector3 _obstacleAvoidance = Vector3.zero;
         private List<Boid> _neighbours;
-        private float _scaling;
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Start()
@@ -26,10 +25,6 @@ namespace BoidBehaviour
             _flock = transform.parent.GetComponent<Flock>();
             _prevPos = transform.position;
             _neighbours = new List<Boid>();
-            _scaling = _flock is not null
-                ? _flock.alignmentFactor + _flock.cohesionFactor + _flock.alignmentFactor + _flock.boidInertiaFactor +
-                  _flock.obstacleAvoidanceFactor
-                : 1f;
         }
 
         // Update is called once per frame
@@ -61,7 +56,7 @@ namespace BoidBehaviour
                 Color.cyan);
 
 
-            var direction = (_separation + _cohesion + _alignment + _velocity + _obstacleAvoidance) / _scaling;
+            var direction = _separation + _cohesion + _alignment + _velocity + _obstacleAvoidance;
 
             transform.position = Vector3.MoveTowards(transform.position, transform.position + direction,
                 _flock.speed * Time.deltaTime);
