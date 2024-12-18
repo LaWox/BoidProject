@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -6,40 +5,39 @@ using Random = UnityEngine.Random;
 public class Flock : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private GameObject[] _boids;
+    public Boid[] boids;
     public GameObject boidPrefab;
     
+    [Range(1, 10)]
     public int totalBoids;
-    public float seperation;
-    public float speed;
+    [Range(0, 1)]
+    public float seperationFactor;
+    [Range(0, 10)]
+    public float alignmentFactor;
+    [Range(0, 10)]
+    public float cohesionFactor;
+    [Range(0, 10)]
+    public float influenceRadius;   
+    [Range(0, 1)]
+    public float speed;   
+    [Range(0, 1)]
+    public float boidInertia;
     
     void Start()
     {
-        _boids = new GameObject[totalBoids];
+        boids = new Boid[totalBoids];
+
         for (var i = 0; i < totalBoids; i++)
         {
-            _boids[i] = Instantiate(boidPrefab, new Vector3(
-                Random.Range(0f, 1f), // Random x
-                Random.Range(0f, 1f), // Random y
-                Random.Range(0f, 1f)  // Random z
-            ), Quaternion.identity);
+            var tempPrefab = Instantiate(boidPrefab, transform);
+            tempPrefab.name = "Boid" + i;
+            tempPrefab.transform.position = new Vector3(
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f),
+                Random.Range(0f, 1f)
+            );
+            
+            boids[i] = tempPrefab.GetComponent<Boid>();
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    Vector3 GetAvgVelocity()
-    {
-        if (_boids == null || _boids.Length == 0)
-        {
-            return Vector3.zero;
-        }
-        var directions = _boids.Select(boid => boid.GetComponent<Boid>().GetVelocity());
-        var avgDirection = directions.Aggregate(Vector3.zero, (current, direction) => current + direction);
-        return avgDirection / (float) totalBoids;
     }
 }
