@@ -1,11 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using TreeEditor;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
-using Object = UnityEngine.Object;
 
 public class Boid : MonoBehaviour
 {
@@ -18,30 +13,30 @@ public class Boid : MonoBehaviour
     private Vector3 _alignment = Vector3.zero;
     private List<Boid> _neighbours;
     private float _scaling;
-    
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
         _velocity = Vector3.forward;
         _flock = transform.parent.GetComponent<Flock>();
         _prevPos = transform.position;
         _neighbours = new List<Boid>();
-        _scaling = _flock is not null ?  _flock.alignmentFactor + _flock.cohesionFactor + _flock.alignmentFactor + _flock.boidInertia : 1f;
+        _scaling = _flock is not null
+            ? _flock.alignmentFactor + _flock.cohesionFactor + _flock.alignmentFactor + _flock.boidInertia
+            : 1f;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (_flock is null){return;}
+        if (_flock is null) return;
         _velocity = (transform.position - _prevPos) / Time.deltaTime;
         _prevPos = transform.position;
-        
+
         if (Time.frameCount % 10 == 0) // update every 10:th frame
-        {
             _neighbours = GetNeighbours();
-        }
-        
-        
+
+
         _separation = GetSeparationDirection() * _flock.seperationFactor;
         _cohesion = GetCohesionDirection() * _flock.cohesionFactor;
         _alignment = GetAlignmentDirection() * _flock.alignmentFactor;
@@ -49,34 +44,34 @@ public class Boid : MonoBehaviour
 
         Debug.DrawLine(transform.position, transform.position + _separation, Color.red);
         Debug.DrawLine(transform.position, transform.position + _cohesion, Color.green);
-        Debug.DrawLine(transform.position, transform.position +_alignment, Color.blue);
+        Debug.DrawLine(transform.position, transform.position + _alignment, Color.blue);
         Debug.DrawLine(transform.position, transform.position + _velocity, Color.yellow);
-        Debug.DrawLine(transform.position, transform.position + Vector3.forward * _flock.influenceRadius, Color.magenta);
-        
+        Debug.DrawLine(transform.position, transform.position + Vector3.forward * _flock.influenceRadius,
+            Color.magenta);
+
 
         var direction = (_separation + _cohesion + _alignment + _velocity) / _scaling;
-        
-        transform.position = Vector3.MoveTowards(transform.position, transform.position + direction, _flock.speed * Time.deltaTime); 
+
+        transform.position = Vector3.MoveTowards(transform.position, transform.position + direction,
+            _flock.speed * Time.deltaTime);
     }
 
     public Vector3 GetVelocity()
     {
         return _velocity;
     }
-    
+
     private List<Boid> GetNeighbours()
     {
         var neighbours = new List<Boid>();
         foreach (var boid in _flock.boids)
-        {
-            if ((transform.position - boid.transform.position).magnitude < _flock.influenceRadius && boid.GetInstanceID() != transform.GetInstanceID())
-            {
+            if ((transform.position - boid.transform.position).magnitude < _flock.influenceRadius &&
+                boid.GetInstanceID() != transform.GetInstanceID())
                 neighbours.Add(boid);
-            }
-        }
+
         return neighbours;
     }
-    
+
     private Vector3 GetSeparationDirection()
     {
         var totalSeparation = Vector3.zero;
@@ -84,14 +79,12 @@ public class Boid : MonoBehaviour
         {
             var separationVector = transform.position - boid.transform.position;
             var magnitude = separationVector.magnitude;
-            if (magnitude > 0)
-            {
-                totalSeparation += separationVector.normalized / magnitude;
-            }
+            if (magnitude > 0) totalSeparation += separationVector.normalized / magnitude;
         }
+
         return totalSeparation;
     }
-    
+
     private Vector3 GetAlignmentDirection()
     {
         var alignmentDirection = _neighbours.Aggregate(Vector3.zero, (current, boid) => current + boid.GetVelocity());
@@ -102,7 +95,7 @@ public class Boid : MonoBehaviour
     {
         var avgPos = _neighbours
             .Select(boid => boid.transform.position)
-            .Aggregate(Vector3.zero, (current, pos) => current + pos) / (float) _neighbours.Count();
+            .Aggregate(Vector3.zero, (current, pos) => current + pos) / (float)_neighbours.Count();
         return (avgPos - transform.position).normalized;
     }
 }
