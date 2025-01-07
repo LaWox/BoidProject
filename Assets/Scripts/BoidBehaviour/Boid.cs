@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace BoidBehaviour
 {
@@ -8,6 +11,7 @@ namespace BoidBehaviour
     {
         private Vector3 _velocity;
         private Vector3 _prevPos;
+        private Vector3 _prevDir;
 
         private Flock _flock;
         private float _obstacles;
@@ -22,8 +26,9 @@ namespace BoidBehaviour
         private void Start()
         {
             _velocity = Vector3.forward;
-            _flock = transform.parent.GetComponent<Flock>();
+            _flock = transform.root.GetComponent<Flock>();
             _prevPos = transform.position;
+            _prevDir = transform.forward;
             _neighbours = new List<Boid>();
         }
 
@@ -33,36 +38,33 @@ namespace BoidBehaviour
             if (_flock is null) return;
             _velocity = (transform.position - _prevPos) / Time.deltaTime;
             _prevPos = transform.position;
+            _prevDir = transform.forward;
 
             if (Time.frameCount % 10 == 0) // update every 10:th frame
                 _neighbours = GetNeighbouringBoids();
 
-            if (Time.frameCount % 10 == 0) // update every 10:th frame
-                _obstacleAvoidance = GetObstacleAvoidanceVelocity() * _flock.obstacleAvoidanceFactor;
-
-            _separation = GetSeparationDirection() * _flock.seperationFactor;
+            _obstacleAvoidance = GetObstacleAvoidanceVelocity() * _flock.obstacleAvoidanceFactor;
+            _separation = GetSeparationDirection() * _flock.separationFactor;
             _cohesion = GetCohesionDirection() * _flock.cohesionFactor;
             _alignment = GetAlignmentDirection() * _flock.alignmentFactor;
             _velocity = _velocity.normalized * _flock.boidInertiaFactor;
 
-            // Debug.DrawLine(transform.position, transform.position + _separation, Color.red);
-            Debug.DrawLine(transform.position, transform.position + _obstacleAvoidance, Color.red);
-            // Debug.DrawLine(transform.position, transform.position + _cohesion, Color.green);
-            // Debug.DrawLine(transform.position, transform.position + _alignment, Color.blue);
-            // Debug.DrawLine(transform.position, transform.position + _velocity, Color.yellow);
-            Debug.DrawLine(transform.position, transform.position + Vector3.forward * _flock.boidInfluenceRadius,
-                Color.magenta);
-            Debug.DrawLine(transform.position, transform.position + Vector3.back * _flock.obstacleInfluenceRadius,
-                Color.cyan);
+            var newDir = _separation + _cohesion + _alignment + _velocity + _obstacleAvoidance;
 
+            var rotationPlane = Vector3.Cross(_prevDir, newDir);
+            var dirAngles = Vector3.SignedAngle(_prevDir, newDir, rotationPlane);
+            var dirRotation = Quaternion.AngleAxis(
+                Math.Abs(dirAngles) > _flock.maxRotation ? Math.Sign(dirAngles) * _flock.maxRotation : dirAngles,
+                rotationPlane);
+            var clampedDir = dirRotation * _prevDir;
+            var modelRotation = Quaternion.LookRotation(clampedDir.normalized);
 
-            var direction = _separation + _cohesion + _alignment + _velocity + _obstacleAvoidance;
-
-            transform.position = Vector3.MoveTowards(transform.position, transform.position + direction,
+            transform.position = Vector3.MoveTowards(transform.position, transform.position + clampedDir,
                 _flock.speed * Time.deltaTime);
+            transform.rotation = modelRotation;
         }
 
-        public Vector3 GetVelocity()
+        private Vector3 GetVelocity()
         {
             return _velocity;
         }
