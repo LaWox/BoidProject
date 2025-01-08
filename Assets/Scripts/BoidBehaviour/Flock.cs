@@ -11,7 +11,7 @@ namespace BoidBehaviour
         public GameObject boidPrefab;
         public List<Collider> obstacleColliders;
 
-        [Range(1, 10)] public int totalBoids;
+        [Range(1, 20)] public int totalBoids;
         [Range(0, 1)] public float separationFactor;
         [Range(0, 10)] public float alignmentFactor;
         [Range(0, 10)] public float cohesionFactor;
@@ -21,7 +21,7 @@ namespace BoidBehaviour
         [Range(0, 1)] public float maxRotation;
 
         [Range(0, 10)] public float boidInfluenceRadius;
-        [Range(0, 1)] public float obstacleInfluenceRadius;
+        [Range(0, 2)] public float obstacleInfluenceRadius;
 
         private void Start()
         {

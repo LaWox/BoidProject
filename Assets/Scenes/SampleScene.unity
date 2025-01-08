@@ -164,18 +164,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boids: []
-  boidPrefab: {fileID: 3367652558607058253, guid: 298041af96b4570489506dd30e3604c4, type: 3}
+  boidPrefab: {fileID: 2635889938181956069, guid: 6db35300c3ee05948bf2f26947fc1457, type: 3}
   obstacleColliders: []
   totalBoids: 10
   separationFactor: 0.2
   alignmentFactor: 1
   cohesionFactor: 1
-  obstacleAvoidanceFactor: 1
+  obstacleAvoidanceFactor: 3.1
   boidInertiaFactor: 0.241
-  speed: 0.3
-  maxRotation: 0.484
+  speed: 1
+  maxRotation: 1
   boidInfluenceRadius: 0.5
-  obstacleInfluenceRadius: 1
+  obstacleInfluenceRadius: 2
 --- !u!1 &63273204
 GameObject:
   m_ObjectHideFlags: 0
