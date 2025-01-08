@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
+using Random = UnityEngine.Random;
 
 namespace BoidBehaviour
 {
@@ -21,6 +20,8 @@ namespace BoidBehaviour
         private Vector3 _alignment = Vector3.zero;
         private Vector3 _obstacleAvoidance = Vector3.zero;
         private List<Boid> _neighbours;
+        private Rigidbody _rigidBody;
+        [SerializeField] private Animator animator;
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Start()
@@ -30,6 +31,10 @@ namespace BoidBehaviour
             _prevPos = transform.position;
             _prevDir = transform.forward;
             _neighbours = new List<Boid>();
+            _rigidBody = GetComponent<Rigidbody>();
+            animator = GetComponent<Animator>();
+
+            Invoke(nameof(PlayIdleAnimation), Random.Range(0f, 10f));
         }
 
         // Update is called once per frame
@@ -43,25 +48,36 @@ namespace BoidBehaviour
             if (Time.frameCount % 10 == 0) // update every 10:th frame
                 _neighbours = GetNeighbouringBoids();
 
+            var newVelocity = GetNewVelocity();
+
+            _rigidBody.MovePosition(transform.position + newVelocity * (_flock.speed * Time.deltaTime));
+            // transform.position = Vector3.MoveTowards(transform.position, transform.position + newVelocity,
+            //     _flock.speed * Time.deltaTime);
+            transform.rotation = Quaternion.LookRotation(newVelocity.normalized);
+        }
+
+        private Vector3 GetNewVelocity()
+        {
             _obstacleAvoidance = GetObstacleAvoidanceVelocity() * _flock.obstacleAvoidanceFactor;
             _separation = GetSeparationDirection() * _flock.separationFactor;
             _cohesion = GetCohesionDirection() * _flock.cohesionFactor;
             _alignment = GetAlignmentDirection() * _flock.alignmentFactor;
             _velocity = _velocity.normalized * _flock.boidInertiaFactor;
 
-            var newDir = _separation + _cohesion + _alignment + _velocity + _obstacleAvoidance;
+            var velocity = _separation + _cohesion + _alignment + _velocity + _obstacleAvoidance;
+            var rotationPlane = Vector3.Cross(_prevDir, velocity);
+            var dirAngles = Vector3.SignedAngle(_prevDir, velocity, rotationPlane);
 
-            var rotationPlane = Vector3.Cross(_prevDir, newDir);
-            var dirAngles = Vector3.SignedAngle(_prevDir, newDir, rotationPlane);
             var dirRotation = Quaternion.AngleAxis(
                 Math.Abs(dirAngles) > _flock.maxRotation ? Math.Sign(dirAngles) * _flock.maxRotation : dirAngles,
                 rotationPlane);
-            var clampedDir = dirRotation * _prevDir;
-            var modelRotation = Quaternion.LookRotation(clampedDir.normalized);
 
-            transform.position = Vector3.MoveTowards(transform.position, transform.position + clampedDir,
-                _flock.speed * Time.deltaTime);
-            transform.rotation = modelRotation;
+            return dirRotation * _prevDir;
+        }
+
+        private void PlayIdleAnimation()
+        {
+            animator?.Play("Idle");
         }
 
         private Vector3 GetVelocity()

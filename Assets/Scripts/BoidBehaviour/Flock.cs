@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace BoidBehaviour
@@ -12,17 +11,17 @@ namespace BoidBehaviour
         public GameObject boidPrefab;
         public List<Collider> obstacleColliders;
 
-        [Range(1, 10)] public int totalBoids;
+        [Range(1, 20)] public int totalBoids;
         [Range(0, 1)] public float separationFactor;
         [Range(0, 10)] public float alignmentFactor;
         [Range(0, 10)] public float cohesionFactor;
         [Range(0, 10)] public float obstacleAvoidanceFactor;
         [Range(0, 1)] public float boidInertiaFactor;
         [Range(0, 1)] public float speed;
-        [Range(0, 45)] public float maxRotation;
+        [Range(0, 1)] public float maxRotation;
 
         [Range(0, 10)] public float boidInfluenceRadius;
-        [Range(0, 1)] public float obstacleInfluenceRadius;
+        [Range(0, 2)] public float obstacleInfluenceRadius;
 
         private void Start()
         {
