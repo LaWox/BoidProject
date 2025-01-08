@@ -51,8 +51,7 @@ namespace BoidBehaviour
             var newVelocity = GetNewVelocity();
 
             _rigidBody.MovePosition(transform.position + newVelocity * (_flock.speed * Time.deltaTime));
-            // transform.position = Vector3.MoveTowards(transform.position, transform.position + newVelocity,
-            //     _flock.speed * Time.deltaTime);
+
             transform.rotation = Quaternion.LookRotation(newVelocity.normalized);
         }
 
