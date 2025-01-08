@@ -172,8 +172,8 @@ MonoBehaviour:
   cohesionFactor: 1
   obstacleAvoidanceFactor: 1
   boidInertiaFactor: 0.241
-  speed: 0.01
-  maxRotation: 1
+  speed: 0.3
+  maxRotation: 0.484
   boidInfluenceRadius: 0.5
   obstacleInfluenceRadius: 1
 --- !u!1 &63273204
@@ -589,13 +589,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 10, z: 0}
+  m_LocalRotation: {x: 0, y: -0.9562027, z: 0.29270554, w: 0}
+  m_LocalPosition: {x: 0, y: 12, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 145.96, y: 0, z: 180}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0

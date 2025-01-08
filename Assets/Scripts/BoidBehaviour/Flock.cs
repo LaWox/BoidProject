@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace BoidBehaviour
@@ -19,7 +18,7 @@ namespace BoidBehaviour
         [Range(0, 10)] public float obstacleAvoidanceFactor;
         [Range(0, 1)] public float boidInertiaFactor;
         [Range(0, 1)] public float speed;
-        [Range(0, 45)] public float maxRotation;
+        [Range(0, 1)] public float maxRotation;
 
         [Range(0, 10)] public float boidInfluenceRadius;
         [Range(0, 1)] public float obstacleInfluenceRadius;
