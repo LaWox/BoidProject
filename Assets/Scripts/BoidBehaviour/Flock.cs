@@ -11,7 +11,8 @@ namespace BoidBehaviour
         public GameObject boidPrefab;
         public List<Collider> obstacleColliders;
 
-        [Range(1, 20)] public int totalBoids;
+
+        [Header("Small boids")] [Range(1, 20)] public int totalBoids;
         [Range(0, 1)] public float separationFactor;
         [Range(0, 10)] public float alignmentFactor;
         [Range(0, 10)] public float cohesionFactor;
